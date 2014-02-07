@@ -24,9 +24,6 @@ return array(
         ),
     ),
     'view_manager' => array(
-        'template_map' => array(
-            'webino-image-thumb/image/png' => __DIR__ . '/../view/webino-image-thumb/image/png.phtml',
-        ),
         'strategies' => array(
             'WebinoImageThumb\View\ImageStrategy'
         )

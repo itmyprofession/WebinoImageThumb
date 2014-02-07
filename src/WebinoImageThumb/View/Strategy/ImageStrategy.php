@@ -30,7 +30,7 @@ class ImageStrategy implements ListenerAggregateInterface
     /**
      * Constructor
      *
-     * @param  WebinoImageThumb $renderer
+     * @param  WebinoImageThumb $webinoImageThumb
      * @return void
      */
     public function __construct(WebinoImageThumb $webinoImageThumb)
@@ -40,7 +40,7 @@ class ImageStrategy implements ListenerAggregateInterface
 
 
     /**
-     * Retrieve the composed renderer
+     * Gets webinoImageThumb
      *
      * @return WebinoImageThumb
      */
@@ -58,8 +58,7 @@ class ImageStrategy implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach(ViewEvent::EVENT_RENDERER, array($this, 'passPhpThumb'), $priority);
-        $this->listeners[] = $events->attach(ViewEvent::EVENT_RESPONSE, array($this, 'injectResponse'), $priority);
+        $this->listeners[] = $events->attach(ViewEvent::EVENT_RENDERER, array($this, 'render'), $priority);
     }
 
     /**
@@ -78,40 +77,28 @@ class ImageStrategy implements ListenerAggregateInterface
     }
 
     /**
-     * Add appropriate Content-Type header
+     * If model is an instance of ImageModel, image is displayed using PHPThumb
      *
      * @param  ViewEvent $e
      * @return void
      */
-    public function injectResponse(ViewEvent $e)
+    public function render(ViewEvent $e)
     {
         $model = $e->getModel();
         
         if (!$model instanceof ImageModel) {
             return ;
         }
-        $response = $e->getResponse();
-        $headers = $response->getHeaders();
-        $headers->addHeaderLine('Content-Type', 'image/png');
-    }
 
-    /**
-     * Set PhpThumb from filename
-     *
-     * @param  ViewEvent $e
-     * @return void
-     */
-    public function passPhpThumb(ViewEvent $e)
-    {
-        $model = $e->getModel();
-        
-        if (!$model instanceof ImageModel) {
-            return ;
-        }
         if ($model->getFileName()) {
-            $model->setPhpThumb($this->getWebinoImageThumb()->create($model->getFileName()));      
+            $phpThumb = $this->getWebinoImageThumb()->create($model->getFileName());     
+        } elseif ($model->getPhpThumb()) {
+            $phpThumb = $model->getPhpThumb();
+        } else {
+            throw new Exception\RunTimeException('Please path image path or instance of PHPThumb\GD');
         }
-        
+
+        $phpThumb->show();
     }
         
 }

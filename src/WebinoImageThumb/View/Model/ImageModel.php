@@ -33,7 +33,7 @@ class ImageModel extends ViewModel
      *
      * @var string
      */
-    protected $template = 'webino-image-thumb/image/png';
+    protected $template = null;
 
     /**
      * Path of image to show
