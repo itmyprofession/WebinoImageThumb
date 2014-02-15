@@ -95,7 +95,7 @@ class ImageStrategy implements ListenerAggregateInterface
         } elseif ($model->getPhpThumb()) {
             $phpThumb = $model->getPhpThumb();
         } else {
-            throw new Exception\RunTimeException('Please path image path or instance of PHPThumb\GD');
+            throw new Exception\RunTimeException('Please provide path image path or instance of PHPThumb\GD');
         }
 
         $phpThumb->show();
